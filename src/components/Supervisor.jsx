@@ -4,7 +4,7 @@ import { MapPin, CheckSquare, Bell, MessageCircle, ChevronRight, Calendar, Clock
 export default function Supervisor() {
   const [selectedSection, setSelectedSection] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
-  
+
   // Sample data
   const employees = [
     { id: 1, name: "John Doe", position: "Technician", location: "Zone A", status: "active", img: "/api/placeholder/50/50" },
@@ -33,16 +33,17 @@ export default function Supervisor() {
   ];
 
   const getStatusColor = (status) => {
-    switch(status) {
+    switch (status) {
       case 'active': return 'bg-green-500';
       case 'break': return 'bg-yellow-500';
       case 'inactive': return 'bg-red-500';
       default: return 'bg-gray-500';
     }
   };
+  
 
   const getAlertIcon = (type) => {
-    switch(type) {
+    switch (type) {
       case 'warning': return <AlertTriangle className="text-yellow-500" size={18} />;
       case 'critical': return <AlertTriangle className="text-red-500" size={18} />;
       case 'info': return <Bell className="text-blue-500" size={18} />;
@@ -52,11 +53,11 @@ export default function Supervisor() {
 
   const renderDetailView = () => {
     if (!selectedSection || !selectedItem) return null;
-    
+
     if (selectedSection === 'tasks') {
       const task = tasks.find(t => t.id === selectedItem);
       const employee = employees.find(e => e.id === task.employeeId);
-      
+
       return (
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h3 className="text-xl font-bold mb-4">{task.title}</h3>
@@ -75,16 +76,16 @@ export default function Supervisor() {
             <div>
               <p className="text-gray-600 mb-1">Completion:</p>
               <div className="w-full bg-gray-200 rounded-full h-2.5">
-                <div className="bg-blue-600 h-2.5 rounded-full" style={{width: task.completion}}></div>
+                <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: task.completion }}></div>
               </div>
               <p className="text-sm mt-1">{task.completion}</p>
             </div>
             <div>
               <p className="text-gray-600 mb-1">Priority:</p>
               <span className={`px-3 py-1 rounded-full text-sm 
-                ${task.priority === 'high' ? 'bg-red-100 text-red-800' : 
-                task.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' : 
-                'bg-green-100 text-green-800'}`}>
+                ${task.priority === 'high' ? 'bg-red-100 text-red-800' :
+                  task.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-green-100 text-green-800'}`}>
                 {task.priority}
               </span>
             </div>
@@ -106,7 +107,7 @@ export default function Supervisor() {
               </div>
             </div>
           </div>
-          <button 
+          <button
             className="mt-6 w-full py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
             onClick={() => {
               setSelectedSection(null);
@@ -118,19 +119,19 @@ export default function Supervisor() {
         </div>
       );
     }
-    
+
     if (selectedSection === 'alerts') {
       const alert = alerts.find(a => a.id === selectedItem);
-      
+
       return (
         <div className="bg-white p-6 rounded-lg shadow-md">
           <div className="flex items-center mb-4">
             {getAlertIcon(alert.type)}
             <h3 className="text-xl font-bold ml-2">{alert.type.charAt(0).toUpperCase() + alert.type.slice(1)} Alert</h3>
           </div>
-          
+
           <p className="text-lg mb-4">{alert.message}</p>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
               <p className="text-gray-600 mb-1">Reported at:</p>
@@ -143,7 +144,7 @@ export default function Supervisor() {
               </span>
             </div>
           </div>
-          
+
           <div className="mt-6">
             <h4 className="font-semibold mb-2">Alert History</h4>
             <div className="space-y-2">
@@ -163,8 +164,8 @@ export default function Supervisor() {
               )}
             </div>
           </div>
-          
-          <button 
+
+          <button
             className="mt-6 w-full py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
             onClick={() => {
               setSelectedSection(null);
@@ -176,15 +177,15 @@ export default function Supervisor() {
         </div>
       );
     }
-    
+
     if (selectedSection === 'concerns') {
       const concern = concerns.find(c => c.id === selectedItem);
       const employee = employees.find(e => e.id === concern.employeeId);
-      
+
       return (
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h3 className="text-xl font-bold mb-4">{concern.title}</h3>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
               <p className="text-gray-600 mb-1">Reported by:</p>
@@ -204,25 +205,25 @@ export default function Supervisor() {
             <div>
               <p className="text-gray-600 mb-1">Status:</p>
               <span className={`px-3 py-1 rounded-full text-sm 
-                ${concern.status === 'resolved' ? 'bg-green-100 text-green-800' : 
-                concern.status === 'in-review' ? 'bg-yellow-100 text-yellow-800' : 
-                'bg-blue-100 text-blue-800'}`}>
+                ${concern.status === 'resolved' ? 'bg-green-100 text-green-800' :
+                  concern.status === 'in-review' ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-blue-100 text-blue-800'}`}>
                 {concern.status}
               </span>
             </div>
           </div>
-          
+
           <div className="mb-6">
             <h4 className="font-semibold mb-2">Description</h4>
             <p className="text-gray-700">
-              {concern.type === 'complaint' 
+              {concern.type === 'complaint'
                 ? "Equipment in Zone B has been malfunctioning since yesterday morning. The control panel is unresponsive and showing error code E-42."
                 : concern.type === 'request'
                   ? "Request to adjust schedule for next week due to medical appointment. Need to leave early on Tuesday."
                   : "Seeking clarification on the new safety protocol implementation timeline and training requirements."}
             </p>
           </div>
-          
+
           <div className="mt-6">
             <h4 className="font-semibold mb-2">Resolution Progress</h4>
             <div className="space-y-2">
@@ -250,8 +251,8 @@ export default function Supervisor() {
               )}
             </div>
           </div>
-          
-          <button 
+
+          <button
             className="mt-6 w-full py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
             onClick={() => {
               setSelectedSection(null);
@@ -277,19 +278,19 @@ export default function Supervisor() {
           </div>
         </div>
       </header>
-      
+
       {/* Main Content */}
       <main className="container">
         {selectedSection && selectedItem ? (
           <div className="mb-6">
-            <button 
+            <button
               onClick={() => {
                 setSelectedSection(null);
                 setSelectedItem(null);
               }}
               className="flex items-center text-blue-600 hover:text-blue-800"
             >
-              <ChevronRight className="rotate-180" size={16} /> 
+              <ChevronRight className="rotate-180" size={16} />
               Back to Dashboard
             </button>
             <div className="mt-4">
@@ -302,25 +303,25 @@ export default function Supervisor() {
             <div className="bg-white rounded-lg shadow-md p-4">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold flex items-center">
-                  <MapPin size={18} className="mr-2 text-blue-500" /> 
+                  <MapPin size={18} className="mr-2 text-blue-500" />
                   Live Employee Tracking
                 </h2>
               </div>
-              
+
               <div className="relative bg-gray-200 rounded-lg h-64 mb-4 overflow-hidden">
                 {/* This would be your actual map component */}
                 <div className="absolute inset-0 p-2 text-center flex flex-col justify-center">
                   <p className="text-gray-500">[Interactive UWB tracking map would render here]</p>
                   <p className="text-sm text-gray-400">Shows real-time employee locations across facility zones</p>
                 </div>
-                
+
                 {/* Placeholder employee location indicators */}
                 <div className="absolute top-1/4 left-1/4 w-4 h-4 rounded-full bg-blue-500 animate-pulse"></div>
                 <div className="absolute top-1/2 left-1/3 w-4 h-4 rounded-full bg-green-500 animate-pulse"></div>
                 <div className="absolute bottom-1/3 right-1/4 w-4 h-4 rounded-full bg-yellow-500 animate-pulse"></div>
                 <div className="absolute bottom-1/4 right-1/3 w-4 h-4 rounded-full bg-red-500 animate-pulse"></div>
               </div>
-              
+
               <div className="space-y-2">
                 {employees.map(employee => (
                   <div key={employee.id} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
@@ -339,22 +340,22 @@ export default function Supervisor() {
                 ))}
               </div>
             </div>
-            
+
             {/* Task Completion */}
             <div className="bg-white rounded-lg shadow-md p-4">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold flex items-center">
-                  <CheckSquare size={18} className="mr-2 text-green-500" /> 
+                  <CheckSquare size={18} className="mr-2 text-green-500" />
                   Task Completion
                 </h2>
               </div>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 {employees.map(employee => {
                   const employeeTasks = tasks.filter(task => task.employeeId === employee.id);
                   const completedTasks = employeeTasks.filter(task => task.status === 'completed').length;
                   const totalTasks = employeeTasks.length;
-                  
+
                   return (
                     <div key={employee.id} className="bg-gray-50 p-3 rounded-lg">
                       <div className="flex items-center mb-2">
@@ -367,9 +368,9 @@ export default function Supervisor() {
                           <span>{completedTasks}/{totalTasks}</span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-green-500 h-2 rounded-full" 
-                            style={{width: `${totalTasks ? (completedTasks/totalTasks)*100 : 0}%`}}
+                          <div
+                            className="bg-green-500 h-2 rounded-full"
+                            style={{ width: `${totalTasks ? (completedTasks / totalTasks) * 100 : 0}%` }}
                           ></div>
                         </div>
                       </div>
@@ -377,12 +378,12 @@ export default function Supervisor() {
                   );
                 })}
               </div>
-              
+
               <h3 className="font-medium text-gray-700 mb-2">Recent Tasks</h3>
               <div className="space-y-2">
                 {tasks.map(task => (
-                  <div 
-                    key={task.id} 
+                  <div
+                    key={task.id}
                     className="p-3 border border-gray-200 rounded-lg hover:bg-blue-50 cursor-pointer"
                     onClick={() => {
                       setSelectedSection('tasks');
@@ -397,11 +398,10 @@ export default function Supervisor() {
                         </p>
                       </div>
                       <div className="flex items-center">
-                        <span className={`px-2 py-1 rounded-full text-xs ${
-                          task.status === 'completed' ? 'bg-green-100 text-green-800' : 
-                          task.status === 'in-progress' ? 'bg-blue-100 text-blue-800' : 
-                          'bg-gray-100 text-gray-800'
-                        }`}>
+                        <span className={`px-2 py-1 rounded-full text-xs ${task.status === 'completed' ? 'bg-green-100 text-green-800' :
+                            task.status === 'in-progress' ? 'bg-blue-100 text-blue-800' :
+                              'bg-gray-100 text-gray-800'
+                          }`}>
                           {task.status}
                         </span>
                         <ChevronRight size={16} className="ml-2 text-gray-400" />
@@ -411,23 +411,22 @@ export default function Supervisor() {
                 ))}
               </div>
             </div>
-            
+
             {/* Alerts */}
             <div className="bg-white rounded-lg shadow-md p-4">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold flex items-center">
-                  <Bell size={18} className="mr-2 text-yellow-500" /> 
+                  <Bell size={18} className="mr-2 text-yellow-500" />
                   Alerts
                 </h2>
               </div>
-              
+
               <div className="space-y-3">
                 {alerts.map(alert => (
-                  <div 
-                    key={alert.id} 
-                    className={`p-3 rounded-lg hover:bg-blue-50 cursor-pointer ${
-                      !alert.resolved ? 'bg-yellow-50 border-l-4 border-yellow-500' : 'bg-gray-50'
-                    }`}
+                  <div
+                    key={alert.id}
+                    className={`p-3 rounded-lg hover:bg-blue-50 cursor-pointer ${!alert.resolved ? 'bg-yellow-50 border-l-4 border-yellow-500' : 'bg-gray-50'
+                      }`}
                     onClick={() => {
                       setSelectedSection('alerts');
                       setSelectedItem(alert.id);
@@ -442,9 +441,8 @@ export default function Supervisor() {
                         </div>
                       </div>
                       <div className="flex items-center">
-                        <span className={`px-2 py-1 rounded-full text-xs ${
-                          alert.resolved ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                        }`}>
+                        <span className={`px-2 py-1 rounded-full text-xs ${alert.resolved ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                          }`}>
                           {alert.resolved ? 'Resolved' : 'Active'}
                         </span>
                         <ChevronRight size={16} className="ml-2 text-gray-400" />
@@ -454,20 +452,20 @@ export default function Supervisor() {
                 ))}
               </div>
             </div>
-            
+
             {/* Employee Concerns */}
             <div className="bg-white rounded-lg shadow-md p-4">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold flex items-center">
-                  <MessageCircle size={18} className="mr-2 text-purple-500" /> 
+                  <MessageCircle size={18} className="mr-2 text-purple-500" />
                   Employee Concerns
                 </h2>
               </div>
-              
+
               <div className="space-y-3">
                 {concerns.map(concern => (
-                  <div 
-                    key={concern.id} 
+                  <div
+                    key={concern.id}
                     className="p-3 bg-gray-50 rounded-lg hover:bg-blue-50 cursor-pointer"
                     onClick={() => {
                       setSelectedSection('concerns');
@@ -477,11 +475,10 @@ export default function Supervisor() {
                     <div className="flex justify-between">
                       <div>
                         <div className="flex items-center">
-                          <span className={`px-2 py-1 rounded-full text-xs mr-2 ${
-                            concern.type === 'complaint' ? 'bg-red-100 text-red-800' : 
-                            concern.type === 'request' ? 'bg-blue-100 text-blue-800' : 
-                            'bg-purple-100 text-purple-800'
-                          }`}>
+                          <span className={`px-2 py-1 rounded-full text-xs mr-2 ${concern.type === 'complaint' ? 'bg-red-100 text-red-800' :
+                              concern.type === 'request' ? 'bg-blue-100 text-blue-800' :
+                                'bg-purple-100 text-purple-800'
+                            }`}>
                             {concern.type}
                           </span>
                           <h4 className="font-medium">{concern.title}</h4>
@@ -491,11 +488,10 @@ export default function Supervisor() {
                         </p>
                       </div>
                       <div className="flex items-center">
-                        <span className={`px-2 py-1), text-xs rounded-full ${
-                          concern.status === 'resolved' ? 'bg-green-100 text-green-800' : 
-                          concern.status === 'in-review' ? 'bg-yellow-100 text-yellow-800' : 
-                          'bg-gray-100 text-gray-800'
-                        }`}>
+                        <span className={`px-2 py-1), text-xs rounded-full ${concern.status === 'resolved' ? 'bg-green-100 text-green-800' :
+                            concern.status === 'in-review' ? 'bg-yellow-100 text-yellow-800' :
+                              'bg-gray-100 text-gray-800'
+                          }`}>
                           {concern.status}
                         </span>
                         <ChevronRight size={16} className="ml-2 text-gray-400" />
