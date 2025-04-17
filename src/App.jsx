@@ -14,7 +14,7 @@ export default function App() {
     
     // Placeholder for other sections
     return (
-      <div className="p-6">
+      <div className="flex p-6">
         <h1 className="text-2xl font-bold mb-4">
           {activeSection.includes('-') 
             ? `${activeSection.split('-')[0].charAt(0).toUpperCase() + activeSection.split('-')[0].slice(1)} - ${activeSection.split('-')[1].charAt(0).toUpperCase() + activeSection.split('-')[1].slice(1)}`

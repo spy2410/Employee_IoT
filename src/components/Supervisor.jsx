@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MapPin, CheckSquare, Bell, MessageCircle, ChevronRight, Calendar, Clock, User, AlertTriangle } from 'lucide-react';
 
 export default function Supervisor() {
@@ -11,6 +11,7 @@ export default function Supervisor() {
     { id: 2, name: "Jane Smith", position: "Engineer", location: "Zone B", status: "active", img: "/api/placeholder/50/50" },
     { id: 3, name: "Mike Johnson", position: "Supervisor", location: "Zone C", status: "break", img: "/api/placeholder/50/50" },
     { id: 4, name: "Lisa Brown", position: "Technician", location: "Zone A", status: "inactive", img: "/api/placeholder/50/50" },
+    { id: 4, name: "Mike Ross", position: "Engineer", location: "Zone D", status: "inactive", img: "/api/placeholder/50/50" },
   ];
 
   const tasks = [
@@ -32,6 +33,51 @@ export default function Supervisor() {
     { id: 3, employeeId: 4, type: "doubt", title: "Protocol clarification", status: "in-review", time: "Today" },
   ];
 
+
+  const zones = {
+    "workstation1": { x: [0, 15], y: [0, 15] },
+    "workstation2": { x: [20, 35], y: [0, 15] },
+    "workstation3": { x: [40, 55], y: [0, 15] },
+    "workstation4": { x: [60, 75], y: [0, 15] },
+    "workstation5": { x: [80, 95], y: [0, 15] },
+    "supervisor_office": { x: [0, 10], y: [20, 30] },
+    "canteen": { x: [20, 50], y: [20, 50] },
+    "restroom": { x: [60, 80], y: [20, 40] },
+  };
+
+  const detectZone = (x, y) => {
+    for (let zone in zones) {
+      const { x: xRange, y: yRange } = zones[zone];
+      if (x >= xRange[0] && x <= xRange[1] && y >= yRange[0] && y <= yRange[1]) {
+        return zone;
+      }
+    }
+    return "unknown";
+  };
+
+  const [livePositions, setLivePositions] = useState([
+    { id: "EMP001", name: "John Doe", x: 5, y: 5 },
+    { id: "EMP002", name: "Jane Smith", x: 25, y: 5 },
+    { id: "EMP003", name: "Mike Johnson", x: 45, y: 10 },
+    { id: "EMP004", name: "Lisa Brown", x: 65, y: 5 },
+    { id: "EMP005", name: "Alex King", x: 85, y: 10 },
+  ]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLivePositions(prev =>
+        prev.map(emp => ({
+          ...emp,
+          x: Math.max(0, Math.min(95, emp.x + (Math.random() * 10 - 5))), // ±5 movement
+          y: Math.max(0, Math.min(50, emp.y + (Math.random() * 10 - 5))),
+        }))
+      );
+    }, 10000); // every 10s
+
+    return () => clearInterval(interval);
+  }, []);
+
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'active': return 'bg-green-500';
@@ -40,7 +86,7 @@ export default function Supervisor() {
       default: return 'bg-gray-500';
     }
   };
-  
+
 
   const getAlertIcon = (type) => {
     switch (type) {
@@ -59,7 +105,7 @@ export default function Supervisor() {
       const employee = employees.find(e => e.id === task.employeeId);
 
       return (
-        <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="bg-white rounded-lg shadow-md">
           <h3 className="text-xl font-bold mb-4">{task.title}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -124,7 +170,7 @@ export default function Supervisor() {
       const alert = alerts.find(a => a.id === selectedItem);
 
       return (
-        <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="bg-white rounded-lg shadow-md">
           <div className="flex items-center mb-4">
             {getAlertIcon(alert.type)}
             <h3 className="text-xl font-bold ml-2">{alert.type.charAt(0).toUpperCase() + alert.type.slice(1)} Alert</h3>
@@ -280,7 +326,7 @@ export default function Supervisor() {
       </header>
 
       {/* Main Content */}
-      <main className="container">
+      <main className="">
         {selectedSection && selectedItem ? (
           <div className="mb-6">
             <button
@@ -311,15 +357,24 @@ export default function Supervisor() {
               <div className="relative bg-gray-200 rounded-lg h-64 mb-4 overflow-hidden">
                 {/* This would be your actual map component */}
                 <div className="absolute inset-0 p-2 text-center flex flex-col justify-center">
-                  <p className="text-gray-500">[Interactive UWB tracking map would render here]</p>
-                  <p className="text-sm text-gray-400">Shows real-time employee locations across facility zones</p>
+                  {/* <p className="text-gray-500">[Interactive UWB tracking map would render here]</p>
+                  <p className="text-sm text-gray-400">Shows real-time employee locations across facility zones</p> */}
                 </div>
 
                 {/* Placeholder employee location indicators */}
-                <div className="absolute top-1/4 left-1/4 w-4 h-4 rounded-full bg-blue-500 animate-pulse"></div>
-                <div className="absolute top-1/2 left-1/3 w-4 h-4 rounded-full bg-green-500 animate-pulse"></div>
-                <div className="absolute bottom-1/3 right-1/4 w-4 h-4 rounded-full bg-yellow-500 animate-pulse"></div>
-                <div className="absolute bottom-1/4 right-1/3 w-4 h-4 rounded-full bg-red-500 animate-pulse"></div>
+                {livePositions.map((emp, index) => (
+                  <div
+                    key={emp.id}
+                    className="absolute w-4 h-4 rounded-full animate-pulse"
+                    style={{
+                      left: `${emp.x}%`,
+                      top: `${emp.y}%`,
+                      backgroundColor: ["#3b82f6", "#10b981", "#facc15", "#ef4444", "#8b5cf6"][index % 5],
+                    }}
+                    title={`${emp.name} - ${detectZone(emp.x, emp.y)}`}
+                  />
+                ))}
+
               </div>
 
               <div className="space-y-2">
@@ -399,8 +454,8 @@ export default function Supervisor() {
                       </div>
                       <div className="flex items-center">
                         <span className={`px-2 py-1 rounded-full text-xs ${task.status === 'completed' ? 'bg-green-100 text-green-800' :
-                            task.status === 'in-progress' ? 'bg-blue-100 text-blue-800' :
-                              'bg-gray-100 text-gray-800'
+                          task.status === 'in-progress' ? 'bg-blue-100 text-blue-800' :
+                            'bg-gray-100 text-gray-800'
                           }`}>
                           {task.status}
                         </span>
@@ -476,8 +531,8 @@ export default function Supervisor() {
                       <div>
                         <div className="flex items-center">
                           <span className={`px-2 py-1 rounded-full text-xs mr-2 ${concern.type === 'complaint' ? 'bg-red-100 text-red-800' :
-                              concern.type === 'request' ? 'bg-blue-100 text-blue-800' :
-                                'bg-purple-100 text-purple-800'
+                            concern.type === 'request' ? 'bg-blue-100 text-blue-800' :
+                              'bg-purple-100 text-purple-800'
                             }`}>
                             {concern.type}
                           </span>
@@ -489,8 +544,8 @@ export default function Supervisor() {
                       </div>
                       <div className="flex items-center">
                         <span className={`px-2 py-1), text-xs rounded-full ${concern.status === 'resolved' ? 'bg-green-100 text-green-800' :
-                            concern.status === 'in-review' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-gray-100 text-gray-800'
+                          concern.status === 'in-review' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-gray-100 text-gray-800'
                           }`}>
                           {concern.status}
                         </span>
