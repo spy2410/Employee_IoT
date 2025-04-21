@@ -55,7 +55,7 @@ export default function Sidebar({ activeSection, setActiveSection }) {
             {/* Navigation Links */}
             <div className="flex-1 overflow-y-auto py-4">
                 <ul className="space-y-2 px-3">
-                    {/* Dashboard */}
+                    {/* Dashboard (default view) */}
                     <li>
                         <button
                             onClick={() => handleSectionClick('dashboard')}
@@ -66,7 +66,7 @@ export default function Sidebar({ activeSection, setActiveSection }) {
                         </button>
                     </li>
 
-                    {/* Tasks */}
+                    {/* Tasks Completion and further details */}
                     <li>
                         <button
                             onClick={() => handleSectionClick('tasks')}
@@ -115,7 +115,7 @@ export default function Sidebar({ activeSection, setActiveSection }) {
                         )}
                     </li>
 
-                    {/* Employees */}
+                    {/* Employees Data and further details (new will be added) */}
                     <li>
                         <button
                             onClick={() => handleSectionClick('employees')}

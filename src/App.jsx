@@ -1,36 +1,42 @@
 import { useState } from 'react';
-import Sidebar from './components/Sidebar';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+// import AuthPage from './components/pages/AuthPage';
+// import HomePage from './pages/HomePage';
+// import AboutPage from './pages/AboutPage';
+// import Supervisor from './Supervisor';
 import Supervisor from './components/Supervisor';
+import Navbar from './components/Navbar';
+import AuthPage from './components/pages/AuthPage';
+import HomePage from './components/pages/HomePage';
+import AboutPage from './components/pages/AboutPage';
+import EmployeeSelf from './components/Employees/EmployeeSelf';
 
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeSection, setActiveSection] = useState('dashboard');
 
-  const renderContent = () => {
-    // For now, just show the supervisor dashboard for the main dashboard section
-    // Other sections would be implemented as needed
-    if (activeSection === 'dashboard') {
-      return <Supervisor />;
-    }
-    
-    // Placeholder for other sections
-    return (
-      <div className="flex p-6">
-        <h1 className="text-2xl font-bold mb-4">
-          {activeSection.includes('-') 
-            ? `${activeSection.split('-')[0].charAt(0).toUpperCase() + activeSection.split('-')[0].slice(1)} - ${activeSection.split('-')[1].charAt(0).toUpperCase() + activeSection.split('-')[1].slice(1)}`
-            : activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}
-        </h1>
-        <p className="text-gray-600">This section is under development.</p>
-      </div>
-    );
-  };
-
   return (
-    <div className="flex h-screen bg-gray-100">
-      <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} />
-      <div className="flex-1 overflow-y-auto">
-        {renderContent()}
-      </div>
-    </div>
+    <Router>
+      {isAuthenticated && <Navbar />}
+      <Routes>
+        {/* Login / Signup */}
+        <Route path="/login" element={<AuthPage onLogin={() => setIsAuthenticated(true)} />} />
+        {/* Public Routes */}
+        <Route path="/" element={isAuthenticated ? <Navigate to="/home" /> : <Navigate to="/login" />} />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/employee-self" element={<EmployeeSelf />} />
+
+
+        {/* Dashboard route — protected */}
+        <Route path="/dashboard" element={isAuthenticated ? (
+          <div className="flex h-screen bg-gray-100">
+            <Supervisor activeSection={activeSection} setActiveSection={setActiveSection} />
+          </div>
+        ) : (
+          <Navigate to="/login" />
+        )} />
+      </Routes>
+    </Router>
   );
 }
